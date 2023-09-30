@@ -57,3 +57,9 @@ def test_destination():
 
 def test_weight():
     assert validate_weight(boxes_list) is True
+
+
+def test_order_id():
+    assert validate_order_id(boxes_list,0,299) is True
+    assert validate_order_id(boxes_list,1,313) is True
+    assert validate_order_id(boxes_list,1,299) is False
