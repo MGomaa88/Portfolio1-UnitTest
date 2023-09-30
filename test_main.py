@@ -29,6 +29,7 @@ box_dict3['size'] = [0.5,0.9,0.5]
 box_dict3['weight'] = 10.1
 box_dict3['dest_id'] = 19
 boxes_list.append(box_dict3)
+
 # Create 10 dictionaries to make test on them
 for i in range(10):
     box_dict = {}  
@@ -49,7 +50,6 @@ for i in range(10):
     # Add the dictionary to the list
     boxes_list.append(box_dict)
 
-
 def test_destination():
     assert validate_destination(boxes_list,1,19) is True
     assert validate_destination(boxes_list,1,15) is False
@@ -64,5 +64,8 @@ def test_order_id():
     assert validate_order_id(boxes_list,1,313) is True
     assert validate_order_id(boxes_list,1,299) is False
 
+
 def test_validate_pallet():
+    assert validate_pallet(boxes_list,19,313) is True
     assert validate_pallet(boxes_list,19,299) is True
+    assert validate_pallet(boxes_list, 10, 250) is False
