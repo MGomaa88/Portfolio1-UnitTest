@@ -1,14 +1,26 @@
 
-def validate_pallet(boxes_list, dest_id,order_id) -> bool:
+def validate_pallet_same_destination(boxes_list, dest_id) -> bool:
+    dest_id_exists = False
     if not validate_weight(boxes_list):
         return False
     for box_index,box in enumerate( boxes_list):
-        if not validate_destination(boxes_list, box_index, dest_id):
+        if validate_destination(boxes_list, box_index, dest_id):
+            dest_id_exists = True
+        elif box_index >= len(boxes_list):
             return False
-        return True
+    return dest_id_exists
+        
     
-
-
+def validate_pallet_same_order(boxes_list,order_id) -> bool:
+    order_id_exists = False
+    if not validate_weight(boxes_list):
+        return False
+    for box_index,box in enumerate( boxes_list):
+        if validate_order_id(boxes_list, box_index, order_id):
+            order_id_exists = True
+        elif box_index >= len(boxes_list):
+            return False
+    return order_id_exists
 
 
 def validate_destination(boxes_list,box_index,dest_id)->bool:
