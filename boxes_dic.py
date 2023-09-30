@@ -1,10 +1,15 @@
 
-def validate_pallet(boxes_list, box_index, dest_id) -> bool:
-    if not validate_destination(boxes_list, box_index, dest_id):
+def validate_pallet(boxes_list, dest_id) -> bool:
+    for box_index,box in enumerate( boxes_list):
+        if not validate_destination(boxes_list, box_index, dest_id) or not validate_weight(boxes_list):
+            return False
+        return True
+        '''
+    if :
         return False
-    if not validate_weight(boxes_list):
+    if not validate_order_id(boxes_list, box_index, order_id):
         return False
-    return True
+        '''
 
 
 
@@ -12,6 +17,9 @@ def validate_pallet(boxes_list, box_index, dest_id) -> bool:
 def validate_destination(boxes_list,box_index,dest_id)->bool:
     return boxes_list[box_index]['dest_id'] == dest_id
 
+
+def validate_order_id(boxes_list, box_index, order_id)->bool:
+    return boxes_list[box_index]['order_id'] == order_id
 
 def validate_weight(boxes_list)->bool:
     weight = 0
@@ -21,8 +29,6 @@ def validate_weight(boxes_list)->bool:
 
 
 
-def validate_order_id(boxes_list, box_index, order_id)->bool:
-    return boxes_list[box_index]['order_id'] == order_id
 
 
 
