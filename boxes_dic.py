@@ -1,7 +1,4 @@
-
-# Create an empty list to store the dictionaries
 boxes_list = []
-
 # Creating empty dictionaries
 box_dict1 = {}
 box_dict2 = {}
@@ -13,6 +10,7 @@ box_dict1['size'] = [0.5,0.1,0.3]
 box_dict1['weight'] = 04.2
 box_dict1['dest_id'] = 19
 boxes_list.append(box_dict1)
+
 
 box_dict2['box_id'] = 34
 box_dict2['order_id'] = 313
@@ -28,38 +26,30 @@ box_dict3['weight'] = 10.1
 box_dict3['dest_id'] = 19
 boxes_list.append(box_dict3)
 
+weight = 0
 
-# Create another 10 extra dictionaries to the list
-for i in range(10):
-    box_dict = {}  
-    
-    box_dict['box_id'] = i + 1  
-    if (i%2 == 0):
-        box_dict['order_id'] = 299  
-        box_dict['dest_id'] = 19  
-    else:
-        box_dict['order_id'] = 313
-        box_dict['dest_id'] = 15  
-    
-     # Adjust size
-    size_value = [round(0.5, 2), round(0.1 + i * 0.1, 2), round(0.3 + i * 0.1, 2)]
-    box_dict['size'] = size_value
-    box_dict['weight'] = 0.4 + i * 1     
-    
-    # Add the dictionary to the list
-    boxes_list.append(box_dict)
+for box_index in boxes_list:
+        weight += box_index['weight']
+        if (weight > 10):
+            print("Weight: ",weight)
+
+def validate_destination(boxes_list,box_index,dest_id)->bool:
+    return boxes_list[box_index]['dest_id'] == dest_id
+
+def validate_weight(boxes_list)->bool:
+    weight = 0
+    for box_index in boxes_list:
+        weight += box_index['weight']
+        if weight > 999:
+            return False
+    return True
 
 
-for box_dict in boxes_list:
-    print("Box:")
-    print(f"Box ID: {box_dict['box_id']}")
-    print(f"Order ID: {box_dict['order_id']}")
-    print(f"Size: {box_dict['size']}")
-    print(f"Weight: {box_dict['weight']}")
-    print(f"Destination ID: {box_dict['dest_id']}")
-    print()
-
-
-def validate_destination(box_id,dest_id)->bool:
-    return boxes_list[box_id]['dest_id'] == dest_id
-
+'''
+def validate_size(boxes_list)->bool:
+    total_size = [0.0,0.0,0.0]
+    for box_dictionary in boxes_list:
+        size_list = box_dictionary.get('size',[0.0,0.0,0.0])
+        total_size = [x +y for x,y in zip(total_size,size_list)]
+        if (total_size >= [1.0,1.0,1.0]):
+'''
