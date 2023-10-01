@@ -1,4 +1,4 @@
-from boxes_dic import *
+from main import *
 
 # Create an empty list to store the dictionaries
 boxes_list = []

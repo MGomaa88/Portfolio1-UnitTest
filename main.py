@@ -1,12 +1,17 @@
 
 def validate_pallet_same_destination(boxes_list, dest_id) -> bool:
+    pallet_list = []
     dest_id_exists = False
+    total_boxes = 0
     if not validate_weight(boxes_list):
         return False
     for box_index,box in enumerate( boxes_list):
         if validate_destination(boxes_list, box_index, dest_id):
             dest_id_exists = True
-        elif box_index >= len(boxes_list):
+            pallet_list.append(boxes_list[box_index])
+            total_boxes = total_boxes + 1
+            print("Number of pallet: ", total_boxes)
+        elif box_index >= len(boxes_list) and total_boxes == 0:
             return False
     return dest_id_exists
         
