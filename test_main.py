@@ -49,6 +49,14 @@ for i in range(10):
     
     # Add the dictionary to the list
     boxes_list.append(box_dict)
+box_dict1 = {}
+
+box_dict1['box_id'] = 15
+box_dict1['order_id'] = 299
+box_dict1['size'] = [0.5,0.1,0.3]
+box_dict1['weight'] = 04.2
+box_dict1['dest_id'] = 15
+boxes_list.append(box_dict1)
 
 def test_destination():
     assert validate_destination(boxes_list,0,19) is True
@@ -64,6 +72,7 @@ def test_order_id():
     assert validate_order_id(boxes_list,0,299) is True
     assert validate_order_id(boxes_list,1,313) is True
     assert validate_order_id(boxes_list,1,299) is False
+    assert validate_order_id(boxes_list,10,299) is True
 
 
 def test_validate_pallet_same_destination():
