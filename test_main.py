@@ -6,7 +6,7 @@ boxes_list = []
 box_dict1 = {}
 box_dict2 = {}
 box_dict3 = {}
-
+'''
 box_dict1['box_id'] = 15
 box_dict1['order_id'] = 299
 box_dict1['size'] = [0.5,0.1,0.3]
@@ -29,11 +29,12 @@ box_dict3['weight'] = 10.1
 box_dict3['dest_id'] = 19
 boxes_list.append(box_dict3)
 
+'''
 # Create 10 dictionaries to make test on them
 for i in range(10):
     box_dict = {}  
     
-    box_dict['box_id'] = i + 1  
+    box_dict['box_id'] = i + 1  # start at index 3
     if (i%2 == 0):
         box_dict['order_id'] = 299  
         box_dict['dest_id'] = 19  
@@ -50,9 +51,10 @@ for i in range(10):
     boxes_list.append(box_dict)
 
 def test_destination():
-    assert validate_destination(boxes_list,1,19) is True
-    assert validate_destination(boxes_list,1,15) is False
-    assert validate_destination(boxes_list,4,19) is False
+    assert validate_destination(boxes_list,0,19) is True
+    assert validate_destination(boxes_list,1,15) is True
+    assert validate_destination(boxes_list,2,10) is False
+    assert validate_destination(boxes_list,3,15) is True
 
 def test_weight():
     assert validate_weight(boxes_list) is True
