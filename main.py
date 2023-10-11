@@ -1,5 +1,5 @@
 
-# function to validate a specific dest_id from list of boxes and validate the weight as well
+# function to check a specific dest_id from list of boxes and check the weight
 def validate_pallet_same_destination(boxes_list, dest_id) -> bool:
     # This list/array is being used to save the boxes with same dest_id
     pallet_list = []
@@ -15,16 +15,20 @@ def validate_pallet_same_destination(boxes_list, dest_id) -> bool:
             total_boxes += 1
             print("Number of boxes in the pallet: ", total_boxes)
             print("box_index: ", box_index, "dest_id: ",boxes_list[box_index]['dest_id'])
+        
+        elif validate_order_id(boxes_list,box_index,dest_id) and total_boxes > 0 :
+            dest_id_exists = True
+
         elif not validate_order_id(boxes_list,box_index,dest_id) and total_boxes ==0 :
             dest_id_exists = False
-       
+
     #Here we make sure that the pallet is less than 1 ton
     if not validate_weight(pallet_list): 
         dest_id_exists = False
     
     return dest_id_exists
         
-# function to validate a specific dest_id from list of boxes and validate the weight as well 
+# function to validate a specific dest_id from list of boxes and validate the weight
 def validate_pallet_same_order(boxes_list,order_id) -> bool:
     order_id_exists = False
     # This list/array is being used to save the boxes with same dest_id
@@ -41,6 +45,10 @@ def validate_pallet_same_order(boxes_list,order_id) -> bool:
             print("box_index: ", box_index, "dest_id: ",
                   boxes_list[box_index]['dest_id'], 
                   " Order nr: ", boxes_list[box_index]['order_id'])
+        
+        elif validate_order_id(boxes_list,box_index,order_id) and total_boxes > 0 :
+            order_id_exists = True
+            
         elif not validate_order_id(boxes_list,box_index,order_id) and total_boxes ==0 :
             order_id_exists = False
     

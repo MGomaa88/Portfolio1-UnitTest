@@ -2,11 +2,11 @@ from main import *
 
 # Create an empty list to store the dictionaries
 boxes_list = []
+'''
 # Creating empty dictionaries
 box_dict1 = {}
 box_dict2 = {}
 box_dict3 = {}
-'''
 box_dict1['box_id'] = 15
 box_dict1['order_id'] = 299
 box_dict1['size'] = [0.5,0.1,0.3]
