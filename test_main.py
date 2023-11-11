@@ -1,18 +1,25 @@
 from main import *
 
-# Create an empty list to store the dictionaries
-boxes_list = []
-'''
-# Creating empty dictionaries
+
+# Create an 2 empty list to store the dictionaries(boxes). One of these list weights under 1 ton. 
+boxes_unsorted_over_ton = []
+boxes_unsorted_under_ton = []
+
+# Creating 5 empty dictionaries. One dictionary = One box
 box_dict1 = {}
 box_dict2 = {}
 box_dict3 = {}
+box_dict4 = {}
+box_dict5 = {}
+
+
 box_dict1['box_id'] = 15
 box_dict1['order_id'] = 299
 box_dict1['size'] = [0.5,0.1,0.3]
 box_dict1['weight'] = 04.2
 box_dict1['dest_id'] = 19
-boxes_list.append(box_dict1)
+boxes_unsorted_over_ton.append(box_dict1)
+boxes_unsorted_under_ton.append(box_dict1)
 
 
 box_dict2['box_id'] = 34
@@ -20,68 +27,72 @@ box_dict2['order_id'] = 313
 box_dict2['size'] = [0.5,0.2,0.4]
 box_dict2['weight'] = 01.2
 box_dict2['dest_id'] = 19
-boxes_list.append(box_dict2)
+boxes_unsorted_over_ton.append(box_dict2)
+boxes_unsorted_under_ton.append(box_dict2)
 
+                                
 box_dict3['box_id'] = 103
 box_dict3['order_id'] = 299
 box_dict3['size'] = [0.5,0.9,0.5]
 box_dict3['weight'] = 10.1
-box_dict3['dest_id'] = 19
-boxes_list.append(box_dict3)
+box_dict3['dest_id'] = 15
+boxes_unsorted_over_ton.append(box_dict3)
+boxes_unsorted_under_ton.append(box_dict3)
 
-'''
-# Create 10 dictionaries to make test on them
-for i in range(10):
-    box_dict = {}  
-    
-    box_dict['box_id'] = i + 1  # start at index 3
-    if (i%2 == 0):
-        box_dict['order_id'] = 299  
-        box_dict['dest_id'] = 19  
-    else:
-        box_dict['order_id'] = 313
-        box_dict['dest_id'] = 15  
-    
-     # Adjust size
-    size_value = [round(0.5, 2), round(0.1 + i * 0.1, 2), round(0.3 + i * 0.1, 2)]
-    box_dict['size'] = size_value
-    box_dict['weight'] = 0.4 + i * 1     
-    
-    # Add the dictionary to the list
-    boxes_list.append(box_dict)
-box_dict1 = {}
 
-box_dict1['box_id'] = 15
-box_dict1['order_id'] = 299
-box_dict1['size'] = [0.5,0.1,0.3]
-box_dict1['weight'] = 04.2
-box_dict1['dest_id'] = 15
-boxes_list.append(box_dict1)
+box_dict4['box_id'] = 10
+box_dict4['order_id'] = 313
+box_dict4['size'] = [0.5,0.9,0.5]
+box_dict4['weight'] = 999
+box_dict4['dest_id'] = 19
+boxes_unsorted_over_ton.append(box_dict4)
+# Here we won't add box_dict4 to the boxes_unsorted_under_ton
 
+box_dict5['box_id'] = 66
+box_dict5['order_id'] = 299
+box_dict5['size'] = [1,0.9,0.9]
+box_dict5['weight'] = 10.1
+box_dict5['dest_id'] = 15
+boxes_unsorted_over_ton.append(box_dict5)
+boxes_unsorted_under_ton.append(box_dict5)
+
+
+
+#Here we Validate the destination for one box using index and dest_id. 
 def test_destination():
-    assert validate_destination(boxes_list,0,19) is True
-    assert validate_destination(boxes_list,1,15) is True
-    assert validate_destination(boxes_list,2,10) is False
-    assert validate_destination(boxes_list,3,15) is True
+    assert validate_destination_box(boxes_unsorted_over_ton,0,19) is True
+    assert validate_destination_box(boxes_unsorted_over_ton,1,15) is False
+    assert validate_destination_box(boxes_unsorted_over_ton,2,10) is False
+    assert validate_destination_box(boxes_unsorted_over_ton,3,15) is False
+    assert validate_destination_box(boxes_unsorted_over_ton,4,15) is True
 
+#Here we Validate the weight for each list.
 def test_weight():
-    assert validate_weight(boxes_list) is True
+    assert validate_weight(boxes_unsorted_over_ton) is False
+    assert validate_weight(boxes_unsorted_under_ton) is True
 
-
+#Here we Validate the order nr for one box.
 def test_order_id():
-    assert validate_order_id(boxes_list,0,299) is True
-    assert validate_order_id(boxes_list,1,313) is True
-    assert validate_order_id(boxes_list,1,299) is False
-    assert validate_order_id(boxes_list,10,299) is True
+    assert validate_order_id(boxes_unsorted_over_ton,0,299) is True
+    assert validate_order_id(boxes_unsorted_over_ton,1,313) is True
+    assert validate_order_id(boxes_unsorted_over_ton,2,299) is True
+    assert validate_order_id(boxes_unsorted_over_ton,2,313) is False
+    assert validate_order_id(boxes_unsorted_over_ton,4,313) is False
 
 
 def test_validate_pallet_same_destination():
-    assert validate_pallet_same_destination(boxes_list,19) is True
-    assert validate_pallet_same_destination(boxes_list,15) is True
-    assert validate_pallet_same_destination(boxes_list, 10) is False
+    # All the tests for the pallet
+    assert distrebute_boxes(boxes_unsorted_over_ton,19) is False
+    assert distrebute_boxes(boxes_unsorted_over_ton,15) is False
+
+    assert distrebute_boxes(boxes_unsorted_over_ton, 10) is False
+    assert distrebute_boxes(boxes_unsorted_over_ton, 10) is False
+    assert distrebute_boxes(boxes_unsorted_over_ton, 10) is False
 
 
 def test_validate_pallet_same_order():
-    assert validate_pallet_same_order(boxes_list,313) is True
-    assert validate_pallet_same_order(boxes_list,299) is True
-    assert validate_pallet_same_order(boxes_list, 250) is False
+    assert validate_pallet_same_order(boxes_unsorted_over_ton,313) is True
+    assert validate_pallet_same_order(boxes_unsorted_over_ton,299) is True
+    assert validate_pallet_same_order(boxes_unsorted_over_ton, 250) is False
+
+ 
