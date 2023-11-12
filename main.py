@@ -39,24 +39,13 @@ def validate_pallet_same_destination(boxes_unsorted,dest_id)->bool:
         return False
     
 
-    antal_boxes = 0
-    #for idx , pallet in enumerate(pallets):
-     #   print("pallet number: ", idx)
-      #  for box in pallet:
-       #     antal_boxes += 1
-        #    print("\t ",box," \t ")
-         #   print("total boxes", len(pallets))
     for index,pallet in enumerate(pallets):
-        #if pallet[0]['dest_id'] != dest_id:
-         #   print("\t Different pallet: ", pallet[0]['dest_id'])
         if pallet[0]['dest_id'] == dest_id:
             for box in pallet:
                 if box['dest_id'] != dest_id:
                   return False
         if not validate_weight(pallet):
             return False
-        
-
         if not validate_volume(pallet):
             return False
     return True
@@ -94,7 +83,7 @@ def validate_volume(boxes_list)->bool:
         volume += box_index['size'][0] * box_index['size'][1] * box_index['size'][2] 
     return volume <= 1.0
 
-
+'''
 
 # Create an 2 empty list to store the dictionaries(boxes). One of these list weights under 1 ton. 
 boxes_unsorted_over_ton = []
@@ -166,3 +155,4 @@ print("=========== Test with over ton=======\n")
 #validate_pallet_same_destination(distrebute_boxes(boxes_unsorted_over_ton),19)
 #print("=========== Test with under ton=======\n")
 #distrebute_boxes(boxes_unsorted_under_ton)
+'''
