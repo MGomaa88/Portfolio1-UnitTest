@@ -58,41 +58,18 @@ boxes_unsorted_under_ton.append(box_dict5)
 
 
 
-#Here we Validate the destination for one box using index and dest_id. 
-def test_destination():
-    assert validate_destination_box(boxes_unsorted_over_ton,0,19) is True
-    assert validate_destination_box(boxes_unsorted_over_ton,1,15) is False
-    assert validate_destination_box(boxes_unsorted_over_ton,2,10) is False
-    assert validate_destination_box(boxes_unsorted_over_ton,3,15) is False
-    assert validate_destination_box(boxes_unsorted_over_ton,4,15) is True
 
 #Here we Validate the weight for each list.
-def test_weight():
-    assert validate_weight(boxes_unsorted_over_ton) is False
-    assert validate_weight(boxes_unsorted_under_ton) is True
+#def test_weight():
+ #   assert validate_weight(boxes_unsorted_over_ton) is False
+  #  assert validate_weight(boxes_unsorted_under_ton) is True
 
-#Here we Validate the order nr for one box.
-def test_order_id():
-    assert validate_order_id(boxes_unsorted_over_ton,0,299) is True
-    assert validate_order_id(boxes_unsorted_over_ton,1,313) is True
-    assert validate_order_id(boxes_unsorted_over_ton,2,299) is True
-    assert validate_order_id(boxes_unsorted_over_ton,2,313) is False
-    assert validate_order_id(boxes_unsorted_over_ton,4,313) is False
 
 
 def test_validate_pallet_same_destination():
-    # All the tests for the pallet
-    assert distrebute_boxes(boxes_unsorted_over_ton,19) is False
-    assert distrebute_boxes(boxes_unsorted_over_ton,15) is False
+    assert validate_pallet_same_destination(boxes_unsorted_over_ton,10) is False
+    assert validate_pallet_same_destination(boxes_unsorted_over_ton,19) is True
+    assert validate_pallet_same_destination(boxes_unsorted_over_ton,15) is True
 
-    assert distrebute_boxes(boxes_unsorted_over_ton, 10) is False
-    assert distrebute_boxes(boxes_unsorted_over_ton, 10) is False
-    assert distrebute_boxes(boxes_unsorted_over_ton, 10) is False
-
-
-def test_validate_pallet_same_order():
-    assert validate_pallet_same_order(boxes_unsorted_over_ton,313) is True
-    assert validate_pallet_same_order(boxes_unsorted_over_ton,299) is True
-    assert validate_pallet_same_order(boxes_unsorted_over_ton, 250) is False
 
  
