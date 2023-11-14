@@ -1,11 +1,14 @@
 from main import *
 
 
-# Create an 2 empty list to store the dictionaries(boxes). One of these list weights under 1 ton. 
+# Create an 3 empty list to store the dictionaries(boxes). 
+# One weights over 1 ton. 
 boxes_unsorted_over_ton = []
+#One weights under 1 ton.
 boxes_unsorted_under_ton = []
+#One has volume under 1^3 m.
 boxes_unsorted_under_cubic = []
-# Creating 5 empty dictionaries. One dictionary = One box
+# Creating 6 empty dictionaries. One dictionary = One box
 box_dict1 = {}
 box_dict2 = {}
 box_dict3 = {}
@@ -84,9 +87,22 @@ def test_volume():
 
 
 def test_validate_pallet_same_destination():
+    #No box has dest_id = 10
     assert validate_pallet_same_destination(boxes_unsorted_over_ton,10) is False
+    #All boxes with dest_id = 19 in a pallet. The pallet is less than one ton and 1^3 m.
     assert validate_pallet_same_destination(boxes_unsorted_over_ton,19) is True
+    #All boxes with dest_id = 15 in a pallet. The pallet is less than one ton and 1^3 m.  
     assert validate_pallet_same_destination(boxes_unsorted_over_ton,15) is True
+
+def test_validate_pallet_same_order():
+    #No boxes has order_id = 290
+    assert validate_pallet_same_order(boxes_unsorted_over_ton,290) is False
+    #All boxes with order_id = 299 in a pallet. The pallet is less than one ton and 1^3 m.
+    assert validate_pallet_same_order(boxes_unsorted_over_ton,299) is True
+    #All boxes with order_id = 313 in a pallet. The pallet is less than one ton and 1^3 m.
+    assert validate_pallet_same_order(boxes_unsorted_over_ton,313) is True
+
+
 
 
  
