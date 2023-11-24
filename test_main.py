@@ -82,6 +82,8 @@ def check_total_boxes_out(boxes_unsorted)->bool:
     total_boxes = 0
 
     for pallet in pallets:
+        if len(pallet) == 0:
+            return False
         for box in pallet:
             total_boxes +=1
 
@@ -93,31 +95,49 @@ def check_total_boxes_out(boxes_unsorted)->bool:
 
 
 # Check the weight and volume of a pallet
-def check_weight_volume(boxes_list)->bool:
-    if len(boxes_list) == 0:
-       return False
-    
+def check_weight(boxes_list)->bool:
     total_weight = 0
-    volume = 0
+    
 # Check if the weight is less than 1 ton
     for box in boxes_list:
         total_weight += box['weight']
+    if total_weight >= 1000:
+        return False
+    return True
+
+def check_volume(boxes_list)->bool:
+    volume = 0
+    # Check if the weight is less than 1 ton
+    for box in boxes_list:
         volume += box['size'][0] * box['size'][1] * box['size'][2]
-    if total_weight >= 1000 or volume >= 1.0:
+    if volume >= 1.0:
         return False
     return True
 
 
-#Here we Validate the weight function.
+
+#Testing the weight.
 def test_weight():
-    assert check_weight_volume(boxes_unsorted_over_cubic) is False
-    assert check_weight_volume(boxes_unsorted_over_ton) is False
-    assert check_weight_volume(boxes_unsorted) is True
+    assert check_weight(boxes_unsorted_over_ton) is False
+    assert check_weight(boxes_unsorted) is True
 
 
+
+#Testing the volume.
+def test_volume():
+    assert check_volume(boxes_unsorted_over_cubic) is False
+    assert check_volume(boxes_unsorted) is True
+
+
+
+#Testing that we not miss any boxes
 def test_total_boxes_out():
     assert check_total_boxes_out(boxes_unsorted) is True
 
+
+
+
+#Testing get_ids function
 def test_get_ids():
 
     #No box has dest_id = 10 in boxes_unsorted
@@ -126,19 +146,21 @@ def test_get_ids():
     #No box has dest_id = 0 in boxes_unsorted
     assert check_get_ids(boxes_unsorted,0) is False
 
-    # dest_id = 19 exists 
+    # dect1 has a dest_id = 15  
+    assert check_get_ids(boxes_unsorted,15) is True
+
+    # dect2 has a dest_id = 19 
     assert check_get_ids(boxes_unsorted,19) is True
 
-    # dest_id = 15 exists 
-    assert check_get_ids(boxes_unsorted,15) is True
+
 
 
 def test_distribute_boxes_by_destination():
 
-    #All boxes with dest_id = 19 in a pallet. The pallet is less than one ton and 1 m^3.
+    #All boxes with dest_id = 19 in a pallet. 
     assert check_distribute_boxes_by_destination(boxes_unsorted,19) is True
 
-    #All boxes with dest_id = 15 in a pallet. The pallet is less than one ton and 1 m^3.  
+    #All boxes with dest_id = 15 in a pallet.   
     assert check_distribute_boxes_by_destination(boxes_unsorted,15) is True
 
 
