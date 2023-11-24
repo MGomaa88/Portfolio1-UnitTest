@@ -1,170 +1,62 @@
 
-#function to get a list of all the dest_id from all the boxes
-def get_destinations(boxes_unsorted):
-    destinations = []
+#This function returns a list of either dest_id or order_id
+def get_ids(boxes_unsorted, type_id):
+    ids = []
     
     for box in boxes_unsorted:
-        destinations.append(box['dest_id'])
-    sorted_destinations = sorted(list(set(destinations)))
-    return sorted_destinations
+        ids.append(box[type_id])
+          
+    sorted_ids = sorted(list(set(ids)))
+    return sorted_ids
 
-#function to get a list of all the order_id from all the boxes
-def get_ordres(boxes_unsorted):
-    ordres = []
-    
-    for box in boxes_unsorted:
-        ordres.append(box['order_id'])
-    sorted_ordres = sorted(list(set(ordres)))
-    return sorted_ordres
 
 # function to distrebute the unsorted boxes on the pallets based on their dest_id 
 def distribute_boxes_by_destination(boxes_unsorted) -> list[dict] :
      
-    list_dest = get_destinations( boxes_unsorted )
+    list_dest = get_ids( boxes_unsorted, 'dest_id' )
+    list_boxesid = []
     pallets_out = []
 
-    weight = 0
-    volume = 0.0
+    weight_pallet = 0
+    volume_pallet = 0.0
+    
 
     for dest in list_dest:
         pallet_with_dest = []
         for box in boxes_unsorted:
+            if box['box_id'] not in list_boxesid:
            
-           if box['dest_id'] == dest:
-                weight += box['weight'] 
-                volume += box['size'][0] * box['size'][1] * box['size'][2] 
-                if weight <= 1000 and volume <= 1: 
-                    pallet_with_dest.append(box)
-                   
-                else:
-                    weight = 0
-                    volume = 0
-                    pallets_out.append(pallet_with_dest)
-                    pallet_with_dest = []
-                    pallet_with_dest.append(box)                   
+                if box['dest_id'] == dest:
+                    weight_pallet += box['weight'] 
+                    volume_pallet += box['size'][0] * box['size'][1] * box['size'][2] 
+                    if weight_pallet < 1000 and volume_pallet < 1.0:
+                        list_boxesid.append(box['box_id']) 
+                        pallet_with_dest.append(box)
+                    
+                    else:
+                        pallets_out.append(pallet_with_dest)
+                        weight_pallet = 0
+                        volume_pallet = 0
+                        pallet_with_dest = []
+
+                        weight_pallet += box['weight'] 
+                        volume_pallet += box['size'][0] * box['size'][1] * box['size'][2] 
+                        if weight_pallet < 1000 and volume_pallet < 1.0:
+                            pallet_with_dest.append(box)
+                            list_boxesid.append(box['box_id'])                   
         pallets_out.append(pallet_with_dest)
     
     return pallets_out
  
-def validate_pallet_same_destination(boxes_unsorted,dest_id)->bool:
-    #Sort the boxes on the different destinations
-    pallets = distribute_boxes_by_destination( boxes_unsorted)
-    #get a list of destinations
-    list_dest = get_destinations( boxes_unsorted )
-    #counter to check boxes in == boxes out
-    total_boxes = 0
-    
-    
-    if dest_id not in list_dest:
-        return False
-    
-    #Make sure all the boxes in one pallet have same dest_id
-    for index,pallet in enumerate(pallets):
-        for box in pallet:
-            total_boxes +=1
-                
-        if pallet[0]['dest_id'] == dest_id:
-            for box in pallet:
-                
-                if box['dest_id'] != dest_id:
-                    return False
-        
-        if not validate_weight(pallet):
-            return False
-        if not validate_volume(pallet):
-            return False
-    #Make sure we dont miss any boxes by Checking boxes out == boxes in
-    if total_boxes != len(boxes_unsorted):
-        return False      
-    return True
-
-
-# function to distrebute the unsorted boxes on the pallets based on their order_id
-def distribute_boxes_by_ordrenr(boxes_unsorted) -> list[dict] :
-     
-    list_ordre = get_ordres( boxes_unsorted )
-    pallets_out = []
-
-    weight = 0
-    volume = 0.0
-
-    for order in list_ordre:
-        pallet_with_order = []
-        for box in boxes_unsorted:
-           
-           if box['order_id'] == order:
-                weight += box['weight'] 
-                volume += box['size'][0] * box['size'][1] * box['size'][2] 
-                if weight <= 1000 and volume <= 1: 
-                    pallet_with_order.append(box)
-                   
-                else:
-                    weight = 0
-                    volume = 0
-                    pallets_out.append(pallet_with_order)
-                    pallet_with_order = []
-                    pallet_with_order.append(box)                   
-        pallets_out.append(pallet_with_order)
-    return pallets_out
-
-def validate_pallet_same_order(boxes_unsorted,order_id)->bool:
-    #Sort the boxes on the different pallets
-    pallets = distribute_boxes_by_ordrenr( boxes_unsorted)
-    #get a list of ordres
-    list_ordres = get_ordres( boxes_unsorted )
-    #counter to check boxes in == boxes out
-    total_boxes = 0
-    
-    if order_id not in list_ordres:
-        return False
-    
-    for index,pallet in enumerate(pallets):
-        for box in pallet:
-            total_boxes +=1
-                
-        if pallet[0]['order_id'] == order_id:
-            for box in pallet:
-                
-                if box['order_id'] != order_id:
-                    return False
-        
-        if not validate_weight(pallet):
-            return False
-        if not validate_volume(pallet):
-            return False
-        
-    if total_boxes != len(boxes_unsorted):
-        return False
-    
-    print("Number of boxes: ",total_boxes) 
-       
-    return True
 
 
 
-# Calculate the weight of a pallet
-def validate_weight(boxes_list)->bool:
-    if len(boxes_list) == 0:
-       return True
-    
-    total_weight = 0
-# Check if the weight is less than 1 ton
-    for box in boxes_list:
-        total_weight += box['weight']
-    return total_weight <= 1000
+
+
+
+
        
 
-
-# Calculate the volume of a pallet
-def validate_volume(boxes_list)->bool:
-    if len(boxes_list) == 0:
-       return True
-    
-    volume = 0
-# Check if the volume is less than 1 cubic meter
-    for box_index in boxes_list:
-        volume += box_index['size'][0] * box_index['size'][1] * box_index['size'][2] 
-    return volume <= 1.0
 
 '''
 I don't really understand this following condition
@@ -176,8 +68,9 @@ paller afsted, end hvis de ikke var separeret mht. ordernummer"
 So i did the following implementation where all the boxes with same 
 order nr sorted in one pallet(pallet_order_dest), then I add other boxes 
  with different order_id but have same destination as one of the boxes to pallet_oneOrder.
-   '''
+   
 def distribute_boxes_by_order_dest(unsorted_boxes)-> list[dict]:
+
    
     pallets_sorted_order = distribute_boxes_by_ordrenr(unsorted_boxes)
     pallets_out = []
@@ -186,6 +79,8 @@ def distribute_boxes_by_order_dest(unsorted_boxes)-> list[dict]:
     weight = 0
     volume = 0.0
     
+    
+
     for pallet in pallets_sorted_order:
         pallet_order_dest = []
         # A list of box_id of the boxes in that specific pallet.
@@ -211,10 +106,66 @@ def distribute_boxes_by_order_dest(unsorted_boxes)-> list[dict]:
         pallets_out.append(pallet_order_dest)
         weight = 0
         volume = 0
-
-    for pallet in pallets_out:
-        #print("\tPallet nr",pallet)
-        for box in pallet:
-            print("total boxes in that pallet",len(pallet))
-            print(f"\tdest_id: {box['dest_id']} \torder_id: {box['order_id']}")
     return pallets_out
+
+
+# Creating 6 empty dictionaries. One dictionary = One box
+box_dict1 = {}
+box_dict2 = {}
+box_dict3 = {}
+box_dict4 = {}
+box_dict5 = {}
+box_dict6 = {}
+boxes_unsorted = []
+#One weights under 1 ton.
+boxes_unsorted_under_ton = []
+#One has volume under 1^3 m.
+boxes_unsorted_under_cubic = []
+
+box_dict1['box_id'] = 15
+box_dict1['order_id'] = 299
+box_dict1['size'] = [0.5,0.1,0.3]
+box_dict1['weight'] = 04.2
+box_dict1['dest_id'] = 19
+boxes_unsorted.append(box_dict1)
+boxes_unsorted_under_ton.append(box_dict1)
+boxes_unsorted_under_cubic.append(box_dict1)
+
+
+box_dict2['box_id'] = 34
+box_dict2['order_id'] = 313
+box_dict2['size'] = [0.5,0.2,0.4]
+box_dict2['weight'] = 01.2
+box_dict2['dest_id'] = 19
+boxes_unsorted.append(box_dict2)
+boxes_unsorted_under_ton.append(box_dict2)
+
+                                
+box_dict3['box_id'] = 103
+box_dict3['order_id'] = 299
+box_dict3['size'] = [0.5,0.9,0.5]
+box_dict3['weight'] = 10.1
+box_dict3['dest_id'] = 15
+boxes_unsorted.append(box_dict3)
+boxes_unsorted_under_ton.append(box_dict3)
+
+
+# NO add box_dict4 to the boxes_unsorted_under_ton, because we test weight function
+box_dict4['box_id'] = 10
+box_dict4['order_id'] = 313
+box_dict4['size'] = [0.5,0.9,0.5]
+box_dict4['weight'] = 999
+box_dict4['dest_id'] = 19
+boxes_unsorted.append(box_dict4)
+
+
+box_dict5['box_id'] = 66
+box_dict5['order_id'] = 299
+box_dict5['size'] = [1,0.9,0.9]
+box_dict5['weight'] = 10.1
+box_dict5['dest_id'] = 15
+boxes_unsorted.append(box_dict5)
+boxes_unsorted_under_ton.append(box_dict5)
+
+distribute_boxes_by_destination(boxes_unsorted)
+'''

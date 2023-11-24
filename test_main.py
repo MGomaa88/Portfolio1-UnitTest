@@ -1,20 +1,14 @@
 from main import *
 
 
-# Create an 3 empty list to store the dictionaries(boxes). 
-# One weights over 1 ton. 
-boxes_unsorted_over_ton = []
-#One weights under 1 ton.
-boxes_unsorted_under_ton = []
-#One has volume under 1^3 m.
-boxes_unsorted_under_cubic = []
-# Creating 6 empty dictionaries. One dictionary = One box
+boxes_unsorted = []
+
+# Creating 5 empty dictionaries.
 box_dict1 = {}
 box_dict2 = {}
 box_dict3 = {}
 box_dict4 = {}
 box_dict5 = {}
-box_dict6 = {}
 
 
 box_dict1['box_id'] = 15
@@ -22,9 +16,7 @@ box_dict1['order_id'] = 299
 box_dict1['size'] = [0.5,0.1,0.3]
 box_dict1['weight'] = 04.2
 box_dict1['dest_id'] = 19
-boxes_unsorted_over_ton.append(box_dict1)
-boxes_unsorted_under_ton.append(box_dict1)
-boxes_unsorted_under_cubic.append(box_dict1)
+boxes_unsorted.append(box_dict1)
 
 
 box_dict2['box_id'] = 34
@@ -32,75 +24,124 @@ box_dict2['order_id'] = 313
 box_dict2['size'] = [0.5,0.2,0.4]
 box_dict2['weight'] = 01.2
 box_dict2['dest_id'] = 19
-boxes_unsorted_over_ton.append(box_dict2)
-boxes_unsorted_under_ton.append(box_dict2)
+boxes_unsorted.append(box_dict2)
 
                                 
 box_dict3['box_id'] = 103
 box_dict3['order_id'] = 299
-box_dict3['size'] = [0.5,0.9,0.5]
+box_dict3['size'] = [0.5,0.2,0.5]
 box_dict3['weight'] = 10.1
 box_dict3['dest_id'] = 15
-boxes_unsorted_over_ton.append(box_dict3)
-boxes_unsorted_under_ton.append(box_dict3)
+boxes_unsorted.append(box_dict3)
 
 
-# NO add box_dict4 to the boxes_unsorted_under_ton, because we test weight function
+# This dict made for testing weight 
+#This box has weight over 1000 kg.
+boxes_unsorted_over_ton= []
 box_dict4['box_id'] = 10
 box_dict4['order_id'] = 313
-box_dict4['size'] = [0.5,0.9,0.5]
-box_dict4['weight'] = 999
+box_dict4['size'] = [0.5,0.3,0.5]
+box_dict4['weight'] = 1000
 box_dict4['dest_id'] = 19
 boxes_unsorted_over_ton.append(box_dict4)
 
 
-box_dict5['box_id'] = 66
+# This dict made for testing volume 
+#This box has volume over 1 m^3.
+boxes_unsorted_over_cubic = []
+box_dict5['box_id'] = 15
 box_dict5['order_id'] = 299
-box_dict5['size'] = [1,0.9,0.9]
-box_dict5['weight'] = 10.1
-box_dict5['dest_id'] = 15
-boxes_unsorted_over_ton.append(box_dict5)
-boxes_unsorted_under_ton.append(box_dict5)
+box_dict5['size'] = [1.2,1.5,0.9]
+box_dict5['weight'] = 04.2
+box_dict5['dest_id'] = 19
+boxes_unsorted_over_cubic.append(box_dict5)
 
 
-# This dic made for testing volume function
-box_dict6['box_id'] = 15
-box_dict6['order_id'] = 299
-box_dict6['size'] = [0.2,0.5,0.4]
-box_dict6['weight'] = 04.2
-box_dict6['dest_id'] = 19
-boxes_unsorted_under_cubic.append(box_dict6)
+def check_get_ids(boxes_unsorted, dest_id)-> bool:
+    if dest_id not in get_ids(boxes_unsorted,'dest_id'):
+        return False
+    return True
 
+def check_distribute_boxes_by_destination(boxes_unsorted,dest_id)->bool:
+    #Sort the boxes on the different destinations
+    pallets = distribute_boxes_by_destination( boxes_unsorted)
+    
+    #Make sure all the boxes in one pallet have same dest_id
+    for index,pallet in enumerate(pallets):
+        if pallet[0]['dest_id'] == dest_id:
+            for box in pallet:
+                if box['dest_id'] != dest_id:
+                    return False     
+    return True
+
+
+#Make sure we dont miss any boxes by Checking boxes out == boxes in
+def check_total_boxes_out(boxes_unsorted)->bool:
+    #Sort the boxes on the different destinations
+    pallets = distribute_boxes_by_destination( boxes_unsorted)
+    total_boxes = 0
+
+    for pallet in pallets:
+        for box in pallet:
+            total_boxes +=1
+
+    if total_boxes != len(boxes_unsorted):
+        return False 
+    return True
+
+
+
+
+# Check the weight and volume of a pallet
+def check_weight_volume(boxes_list)->bool:
+    if len(boxes_list) == 0:
+       return False
+    
+    total_weight = 0
+    volume = 0
+# Check if the weight is less than 1 ton
+    for box in boxes_list:
+        total_weight += box['weight']
+        volume += box['size'][0] * box['size'][1] * box['size'][2]
+    if total_weight >= 1000 or volume >= 1.0:
+        return False
+    return True
 
 
 #Here we Validate the weight function.
 def test_weight():
-    assert validate_weight(boxes_unsorted_over_ton) is False
-    assert validate_weight(boxes_unsorted_under_ton) is True
+    assert check_weight_volume(boxes_unsorted_over_cubic) is False
+    assert check_weight_volume(boxes_unsorted_over_ton) is False
+    assert check_weight_volume(boxes_unsorted) is True
 
 
-#Here we Validate the volume function.
-def test_volume():
-    assert validate_volume(boxes_unsorted_over_ton) is False
-    assert validate_volume(boxes_unsorted_under_ton) is False
-    assert validate_volume(boxes_unsorted_under_cubic) is True
+def test_total_boxes_out():
+    assert check_total_boxes_out(boxes_unsorted) is True
+
+def test_get_ids():
+
+    #No box has dest_id = 10 in boxes_unsorted
+    assert check_get_ids(boxes_unsorted,10) is False
+
+    #No box has dest_id = 0 in boxes_unsorted
+    assert check_get_ids(boxes_unsorted,0) is False
+
+    # dest_id = 19 exists 
+    assert check_get_ids(boxes_unsorted,19) is True
+
+    # dest_id = 15 exists 
+    assert check_get_ids(boxes_unsorted,15) is True
 
 
-def test_validate_pallet_same_destination():
-    #No box has dest_id = 10
-    assert validate_pallet_same_destination(boxes_unsorted_over_ton,10) is False
-    #All boxes with dest_id = 19 in a pallet. The pallet is less than one ton and 1^3 m.
-    assert validate_pallet_same_destination(boxes_unsorted_over_ton,19) is True
-    #All boxes with dest_id = 15 in a pallet. The pallet is less than one ton and 1^3 m.  
-    assert validate_pallet_same_destination(boxes_unsorted_over_ton,15) is True
+def test_distribute_boxes_by_destination():
 
-def test_validate_pallet_same_order():
-    #No boxes has order_id = 290
-    assert validate_pallet_same_order(boxes_unsorted_over_ton,290) is False
-    #All boxes with order_id = 299 in a pallet. The pallet is less than one ton and 1^3 m.
-    assert validate_pallet_same_order(boxes_unsorted_over_ton,299) is True
-    #All boxes with order_id = 313 in a pallet. The pallet is less than one ton and 1^3 m.
-    assert validate_pallet_same_order(boxes_unsorted_over_ton,313) is True
+    #All boxes with dest_id = 19 in a pallet. The pallet is less than one ton and 1 m^3.
+    assert check_distribute_boxes_by_destination(boxes_unsorted,19) is True
+
+    #All boxes with dest_id = 15 in a pallet. The pallet is less than one ton and 1 m^3.  
+    assert check_distribute_boxes_by_destination(boxes_unsorted,15) is True
+
+
 
 
 
