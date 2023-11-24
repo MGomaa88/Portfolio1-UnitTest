@@ -1,8 +1,5 @@
 from main import *
 
-
-boxes_unsorted = []
-
 # Creating 5 empty dictionaries.
 box_dict1 = {}
 box_dict2 = {}
@@ -10,6 +7,8 @@ box_dict3 = {}
 box_dict4 = {}
 box_dict5 = {}
 
+#the following 3 dictionaries for testing distribute_boxes_by_destination()
+boxes_unsorted = []
 
 box_dict1['box_id'] = 15
 box_dict1['order_id'] = 299
@@ -107,7 +106,7 @@ def check_weight(boxes_list)->bool:
 
 def check_volume(boxes_list)->bool:
     volume = 0
-    # Check if the weight is less than 1 ton
+    # Check if the volume is less than 1 m^3
     for box in boxes_list:
         volume += box['size'][0] * box['size'][1] * box['size'][2]
     if volume >= 1.0:
