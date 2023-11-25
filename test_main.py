@@ -34,7 +34,7 @@ box_dict3['dest_id'] = 15
 boxes_unsorted.append(box_dict3)
 
 
-# This dict made for testing weight 
+# The following list for testing weight 
 #This box has weight over 1000 kg.
 boxes_unsorted_over_ton= []
 box_dict4['box_id'] = 10
@@ -45,7 +45,7 @@ box_dict4['dest_id'] = 19
 boxes_unsorted_over_ton.append(box_dict4)
 
 
-# This dict made for testing volume 
+# The following list for testing volume 
 #This box has volume over 1 m^3.
 boxes_unsorted_over_cubic = []
 box_dict5['box_id'] = 15
@@ -64,14 +64,19 @@ def check_get_ids(boxes_unsorted, dest_id)-> bool:
 def check_distribute_boxes_by_destination(boxes_unsorted,dest_id)->bool:
     #Sort the boxes on the different destinations
     pallets = distribute_boxes_by_destination( boxes_unsorted)
-    
+    dest_found = False
+
     #Make sure all the boxes in one pallet have same dest_id
     for index,pallet in enumerate(pallets):
         if pallet[0]['dest_id'] == dest_id:
             for box in pallet:
+                if dest_id == box['dest_id']:
+                    dest_found = True
                 if box['dest_id'] != dest_id:
-                    return False     
-    return True
+                    return False
+    
+    return dest_found
+    
 
 
 #Make sure we dont miss any boxes by Checking boxes out == boxes in
@@ -161,6 +166,9 @@ def test_distribute_boxes_by_destination():
 
     #All boxes with dest_id = 15 in a pallet.   
     assert check_distribute_boxes_by_destination(boxes_unsorted,15) is True
+
+    #The dest_id = 5, doesn't exist in the boxes_unsorted list.     
+    assert check_distribute_boxes_by_destination(boxes_unsorted,5) is False
 
 
 
