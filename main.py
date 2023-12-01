@@ -29,7 +29,7 @@ def distribute_boxes_by_destination(boxes_unsorted) -> list[dict] :
                 if box['dest_id'] == dest:
                     weight_pallet += box['weight'] 
                     volume_pallet += box['size'][0] * box['size'][1] * box['size'][2] 
-                    if weight_pallet < 1000 and volume_pallet < 1.0:
+                    if weight_pallet <= 1000 and volume_pallet <= 1.0:
                         list_boxesid.append(box['box_id']) 
                         pallet_with_dest.append(box)
                     
@@ -41,7 +41,7 @@ def distribute_boxes_by_destination(boxes_unsorted) -> list[dict] :
 
                         weight_pallet += box['weight'] 
                         volume_pallet += box['size'][0] * box['size'][1] * box['size'][2] 
-                        if weight_pallet < 1000 and volume_pallet < 1.0:
+                        if weight_pallet <= 1000 and volume_pallet <= 1.0:
                             pallet_with_dest.append(box)
                             list_boxesid.append(box['box_id'])                   
         pallets_out.append(pallet_with_dest)
