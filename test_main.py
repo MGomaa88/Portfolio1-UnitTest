@@ -1,11 +1,10 @@
 from main import *
 
-# Creating 5 empty dictionaries.
+# Creating 3 empty dictionaries.
 box_dict1 = {}
 box_dict2 = {}
 box_dict3 = {}
-box_dict4 = {}
-box_dict5 = {}
+
 
 #the following 3 dictionaries for testing distribute_boxes_by_destination()
 multi_dest_boxes_under_ton_cubic = []
@@ -34,61 +33,17 @@ box_dict3['dest_id'] = 15
 multi_dest_boxes_under_ton_cubic.append(box_dict3)
 
 
-# The following list for testing weight 
-#This box has weight over 1000 kg.
-boxes_same_dest_but_over_ton= []
-box_dict4['box_id'] = 10
-box_dict4['order_id'] = 313
-box_dict4['size'] = [0.5,0.3,0.5]
-box_dict4['weight'] = 1000
-box_dict4['dest_id'] = 19
-boxes_same_dest_but_over_ton.append(box_dict4)
-
-# The following list for testing volume 
-#This box has volume over 1 m^3.
-boxes_same_dest_but_over_cubic = []
-box_dict5['box_id'] = 15
-box_dict5['order_id'] = 299
-box_dict5['size'] = [1.0,1.0,1.0]
-box_dict5['weight'] = 04.2
-box_dict5['dest_id'] = 19
-boxes_same_dest_but_over_cubic.append(box_dict5)
 
 
-def is_dest_id_in_boxlist(boxes_unsorted, dest_id)-> bool:
-    return dest_id in get_ids(boxes_unsorted,'dest_id')
-       
+#Testing that we not miss any boxes
+def test_total_boxes_out():
 
-#Make sure we dont miss any boxes by Checking boxes out == boxes in
-def check_boxes_out_equal_boxes_in(boxes_unsorted)->bool:
-    #Sort the boxes on the different destinations
-    pallets = distribute_boxes_by_destination( boxes_unsorted)
-    total_boxes = 0
+    total_boxes_in = len(multi_dest_boxes_under_ton_cubic)
+    pallets = distribute_boxes_by_destination(multi_dest_boxes_under_ton_cubic)
+    total_boxes_out = sum(len(pallet) for pallet in pallets)
 
-    for pallet in pallets:
-        if len(pallet) == 0:
-            return False
-        for box in pallet:
-            total_boxes +=1
+    assert total_boxes_in == total_boxes_out
 
-    return total_boxes == len(boxes_unsorted)
-       
-
-
-# Check the weight and volume of a pallet
-def check_weight(boxes_list)->bool:
-    total_weight = 0
-# Check if the weight is less than 1 ton
-    for box in boxes_list:
-        total_weight += box['weight']
-    return total_weight < 1000
-
-def check_volume(boxes_list)->bool:
-    volume = 0
-    # Check if the volume is less than 1 m^3
-    for box in boxes_list:
-        volume += box['size'][0] * box['size'][1] * box['size'][2]
-    return volume < 1.0
 
 
 
@@ -97,51 +52,45 @@ def test_pallets_only_have_one_dest_id():
         assert len(set([box['dest_id'] for box in pallet])) == 1
 
 
-#Testing the weight.
-def test_weight():
-    for pallet in distribute_boxes_by_destination(multi_dest_boxes_under_ton_cubic):
-        assert check_weight(pallet) is True
-
-    for pallet in distribute_boxes_by_destination(boxes_same_dest_but_over_ton):
-        assert check_weight(pallet) is False
-
-
-#Testing the volume.
-def test_volume():
-    for pallet in distribute_boxes_by_destination(boxes_same_dest_but_over_cubic):
-        assert check_volume(pallet) is False
-
-    for pallet in distribute_boxes_by_destination(multi_dest_boxes_under_ton_cubic):
-        assert check_volume(pallet) is True
-
-
-
-#Testing that we not miss any boxes
-def test_total_boxes_out():
-    assert check_boxes_out_equal_boxes_in(multi_dest_boxes_under_ton_cubic) is True
-
-
-
 
 #Testing get_ids function
 def test_get_ids():
 
-    #No box has dest_id = 10 in boxes_unsorted
-    assert is_dest_id_in_boxlist(multi_dest_boxes_under_ton_cubic,10) is False
+    dest_id_result = get_ids(multi_dest_boxes_under_ton_cubic,'dest_id')
+    expected_dest_id_result = [15,19]
+    assert dest_id_result == expected_dest_id_result
 
-    #No box has dest_id = 0 in boxes_unsorted
-    assert is_dest_id_in_boxlist(multi_dest_boxes_under_ton_cubic,0) is False
+    
+    order_id_result = get_ids(multi_dest_boxes_under_ton_cubic,'order_id')
+    expected_order_id_result = [299,313]
+    assert order_id_result == expected_order_id_result
 
-    # dect1 has a dest_id = 15  
-    assert is_dest_id_in_boxlist(multi_dest_boxes_under_ton_cubic,15) is True
-
-    # dect2 has a dest_id = 19 
-    assert is_dest_id_in_boxlist(multi_dest_boxes_under_ton_cubic,19) is True
-
-
+    # Test when the input list is empty
+    boxes = []
+    result = get_ids(boxes, 'dest_id')
+    expected_result = []
+    assert result == expected_result
 
 
 
+boxes = [
+        {'box_id': 1, 'order_id': 313, 'dest_id': 1, 'weight': 200,  'size': (0.1, 0.2, 0.3)},
+        {'box_id': 2, 'order_id': 299, 'dest_id': 1, 'weight': 300,  'size': (0.2, 0.2, 0.2)},
+        {'box_id': 3, 'order_id': 299, 'dest_id': 2, 'weight': 500,  'size': (1.1, 2.1, 1.1)},
+        {'box_id': 4, 'order_id': 313, 'dest_id': 2, 'weight': 1100, 'size': (0.1, 0.1, 0.1)},
+    ]
+
+pallets = distribute_boxes_by_destination(boxes)
+
+def test_weight():
+    for pallet in pallets:
+        total_weight = sum(box['weight'] for box in pallet)
+        assert total_weight < 1000
+
+def test_volume():   
+    for pallet in pallets:
+        total_volume = sum(box['size'][0] * box['size'][1] * box['size'][2] for box in pallet)
+        assert total_volume < 1.0
 
 
 
