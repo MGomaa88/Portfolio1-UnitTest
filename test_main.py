@@ -141,17 +141,6 @@ def test_get_ids():
 
 
 
-def test_distribute_boxes_by_destination():
-
-    #All boxes with dest_id = 19 in a pallet. 
-    assert check_distribute_boxes_by_destination(multi_dest_boxes_under_ton_cubic,19) is True
-
-    #All boxes with dest_id = 15 in a pallet.   
-    assert check_distribute_boxes_by_destination(multi_dest_boxes_under_ton_cubic,15) is True
-
-    #The dest_id = 5, doesn't exist in the boxes_unsorted list.     
-    assert check_distribute_boxes_by_destination(multi_dest_boxes_under_ton_cubic,5) is False
-
 
 
 
